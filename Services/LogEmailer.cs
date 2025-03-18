@@ -23,7 +23,6 @@ public class LogEmailer(
             throw new ArgumentNullException(facility == null ? nameof(facility) : nameof(context));
 
         var facilityName = facility.FacName ?? "Unknown Facility";
-        _logger.LogInformation("Starting log email process for {FacilityName}", facilityName);
 
         try
         {
@@ -31,7 +30,6 @@ public class LogEmailer(
 
             if (logs == null || logs.Count == 0)
             {
-                _logger.LogInformation("No logs found for {FacilityName}", facilityName);
                 return;
             }
 
@@ -63,7 +61,6 @@ public class LogEmailer(
             if (pdf != null && pdf.Length > 0)
             {
                 attachments.Add($"uploadlog_{reportDate}.pdf", pdf);
-                _logger.LogDebug("Generated upload log PDF ({Size} bytes)", pdf.Length);
             }
 
             var phqLogs = logs.Where(l => l.NoteType == "PHQ9").ToList();
@@ -79,10 +76,6 @@ public class LogEmailer(
                 if (specializedPdf != null && specializedPdf.Length > 0)
                 {
                     attachments.Add($"phq9_bims_{reportDate}.pdf", specializedPdf);
-                    _logger.LogDebug(
-                        "Generated PHQ9/BIMS PDF ({Size} bytes)",
-                        specializedPdf.Length
-                    );
                 }
             }
 

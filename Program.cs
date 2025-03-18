@@ -25,8 +25,8 @@ try
 
     var reportsTable = new TSC_Reports(config);
 
-    // var states = await reportsTable.Set<StatesTable>().ToListAsync();
-    var states = new List<StatesTable>() { new() { State = "NJ" } };
+    var states = await reportsTable.Set<StatesTable>().ToListAsync();
+    // var states = new List<StatesTable>() { new() { State = "PA" } };
 
     var contextFactory = serviceProvider.GetRequiredService<IContextFactory>();
     var facilitiesGetter = serviceProvider.GetRequiredService<IFacilitiesGetter>();

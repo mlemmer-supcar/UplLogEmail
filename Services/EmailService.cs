@@ -16,10 +16,10 @@ public class EmailService(IConfiguration config) : IEmailService
     {
         var emailClient = new SendGridClient(apiKey);
         var fromAddress = new EmailAddress("tsc@tscnotifications.com");
-        var toAddresses = new List<EmailAddress> { new("mlemmer@thesupportivecare.com") };
-        // var toAddresses = facility
-        //     .Contacts!.Select(contact => new EmailAddress(contact.UplLogEmail))
-        //     .ToList();
+        // var toAddresses = new List<EmailAddress> { new("mlemmer@thesupportivecare.com") };
+        var toAddresses = facility
+            .Contacts!.Select(contact => new EmailAddress(contact.UplLogEmail))
+            .ToList();
         var replyToAddress = new EmailAddress("it@thesupportivecare.com");
         var emailSubject =
             $"{facility.FacName} - PCC Upload Log {DateTime.Now.AddDays(-1):MM/dd/yyyy}";
@@ -48,7 +48,7 @@ public class EmailService(IConfiguration config) : IEmailService
             };
             emailMessage.AddAttachment(emailAttachment);
         }
-        // emailMessage.AddBcc(new EmailAddress("it@thesupportivecare.com"));
+        emailMessage.AddBcc(new EmailAddress("it@thesupportivecare.com"));
 
         var response = await emailClient.SendEmailAsync(emailMessage);
 
