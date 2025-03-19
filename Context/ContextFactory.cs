@@ -35,7 +35,17 @@ public class ContextFactory(IConfiguration configuration) : IContextFactory
         var connectionString = $"{baseConnectionString}Initial Catalog={databaseName};";
 
         var optionsBuilder = new DbContextOptionsBuilder<StateContext>();
-        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.UseSqlServer(
+            connectionString,
+            sqlServerOptionsAction: sqlOptions =>
+            {
+                sqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(30),
+                    errorNumbersToAdd: null
+                );
+            }
+        );
         _currentStateContext = new StateContext(optionsBuilder.Options);
     }
 }
