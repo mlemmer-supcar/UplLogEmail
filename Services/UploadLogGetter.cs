@@ -49,21 +49,20 @@ public class UploadLogGetter() : IUploadLogGetter
             })
             .ToList();
 
-        var phqNoteIds = result.Where(r => r.NoteType == "PHQ9").Select(r => r.NoteId).ToList();
-        var bimsNoteIds = result.Where(r => r.NoteType == "BIMS").Select(r => r.NoteId).ToList();
+        var phqNotes = result.Where(r => r.NoteType == "PHQ9").ToList();
+        var bimsNotes = result.Where(r => r.NoteType == "BIMS").ToList();
 
-        foreach (var noteId in phqNoteIds)
+        foreach (var note in phqNotes)
         {
             var phqNote = await dbContext
                 .Set<PhqTable>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.PhqId == noteId);
+                .FirstOrDefaultAsync(p => p.PhqId == note.NoteId);
 
             if (phqNote != null)
             {
-                var log = result.First(r => r.NoteId == noteId);
-                log.Phq9Score = phqNote.Score?.ToString() ?? "";
-                log.Phq2Score =
+                note.Phq9Score = phqNote.Score?.ToString() ?? "";
+                note.Phq2Score =
                     Phq2ScoreGetter.GetScore(
                         phqNote.Score ?? 0,
                         phqNote.InterviewConducted ?? "-1",
@@ -73,16 +72,16 @@ public class UploadLogGetter() : IUploadLogGetter
             }
         }
 
-        foreach (var noteId in bimsNoteIds)
+        foreach (var note in bimsNotes)
         {
             var bimsNote = await dbContext
                 .Set<BimsTable>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(b => "BXB" + b.BimsId == noteId);
+                .FirstOrDefaultAsync(b => "BXB" + b.BimsId == note.NoteId);
 
             if (bimsNote != null)
             {
-                var log = result.First(r => r.NoteId == noteId);
+                var log = result.First(r => r.NoteId == note.NoteId);
                 log.BimsScore = bimsNote.BimsScore?.ToString() ?? "";
             }
         }
